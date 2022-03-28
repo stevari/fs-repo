@@ -14,19 +14,28 @@ const Statistics = ({good,neutral,bad}) => {
 
   let pospercentige = 0;
   pospercentige = (good/all)*100;
-  return(
+  if(all>0){ //show stats only when there has been atleast one user input
+    return(
     
-    <div>
-      <StatisticLine text="good" value ={good} />
-      <StatisticLine text="neutral" value ={neutral} />
-      <StatisticLine text="bad" value ={bad} />
-      <StatisticLine text="all" value ={all} />
-      <StatisticLine text="average" value ={average} />
-      <StatisticLine text="positive" value ={pospercentige} text2="%" />
-      
-
-    </div>
-  )
+      <div>
+        <StatisticLine text="good" value ={good} />
+        <StatisticLine text="neutral" value ={neutral} />
+        <StatisticLine text="bad" value ={bad} />
+        <StatisticLine text="all" value ={all} />
+        <StatisticLine text="average" value ={average} />
+        <StatisticLine text="positive" value ={pospercentige} text2="%" />
+        
+  
+      </div>
+    )
+  }else{
+    return(
+      <div>
+        <h4>No feedback given :(</h4>
+      </div>
+    )
+  }
+ 
 }
 
 const App = () => {
@@ -63,7 +72,7 @@ const App = () => {
       <h2>Statistics:</h2> 
 
       <br></br> 
-
+     
       <Statistics good = {good} neutral={neutral} bad = {bad}/>
 
 
