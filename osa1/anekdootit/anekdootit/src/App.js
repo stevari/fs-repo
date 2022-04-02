@@ -4,8 +4,11 @@ const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>
     {text}
   </button>
+
 )
+
 const App = () => {
+
   const anecdotes = [
     'If it hurts, do it more often.',
     'Adding manpower to a late software project makes it later!',
@@ -15,27 +18,45 @@ const App = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.'
   ]
-
+ 
   const [selected, setSelected] = useState(0)
-  const [votes, setVotes] = useState(0)
-  
   const nextAnecdote = () => setSelected(selected + 1)
-  const vote = () => setVotes(votes +1)
+
+  const [points,setPoints] = useState(new Uint8Array(7))  
+  const updatePoints = () => {
+    const copyPoints = [...points]
+    copyPoints[selected] += 1
+    setPoints(copyPoints)
+    
+  }
+  
+  const mostPoints = points.indexOf(Math.max(...points))
 
   return (
     <>
+    <h1>
+      Anecdote of the day
+    </h1>
       <div>
+
         {anecdotes[selected]}
+
       </div>
+      has {points[selected]} votes
       <div>
         <Button
           handleClick={nextAnecdote}
           text='next anecdote'
         />
         <Button
-          handleClick={vote}
+          handleClick={updatePoints}
           text='vote'
         />
+        <h1>
+          Anecdote with most votes
+        </h1>
+        {anecdotes[mostPoints]}
+
       </div>
     </>
 
