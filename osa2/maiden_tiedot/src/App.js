@@ -34,7 +34,9 @@ function App() {
     newFilter ={newFilter}
     handleFilterChange ={handleFilterChange}
     />
-    <CountryDisplayer countriesToShow ={countriesToShow}/>
+    <CountryDisplayer countriesToShow ={countriesToShow}
+    setNewFilter={setNewFilter}
+    />
     </div>
     
   );
@@ -78,8 +80,8 @@ const Country = (props) =>{
   )
 }
 const CountryDisplayer =(props) => {
-
   let length = props.countriesToShow.length
+  
   if(length===1){
     return(
       <div>
@@ -98,13 +100,18 @@ const CountryDisplayer =(props) => {
       <div>
           <ul>
           {props.countriesToShow.map(country => 
-            <li>{country.name.common}</li>
+            <li>
+            {country.name.common} <button type='show'
+             onClick={()=>props.setNewFilter(country.name.common.toLocaleLowerCase())}
+            >show </button>
+            </li>
             )}
         </ul>
       </div>
   
     )
   }
+  
   
 }
 
