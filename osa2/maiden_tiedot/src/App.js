@@ -75,7 +75,14 @@ const Country = (props) =>{
       </>
       <>
       <img src={country.flags.png}/>
-      </>    
+      </>  
+      <div>
+        <h3>
+        Weather in {country.capital}
+        </h3>
+        
+      </div>
+        
     </div>
   )
 }

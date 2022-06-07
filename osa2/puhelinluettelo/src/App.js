@@ -3,7 +3,9 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import axios from 'axios'
-
+import personService from './services/personService'
+//http://localhost:3001/persons
+//npx json-server --port=3001 --watch db.json
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
@@ -12,10 +14,10 @@ const App = () => {
   const [showAll] = useState(false)
 
   useEffect(() => {
-    axios
-    .get("http://localhost:3001/persons")
-    .then(response =>{
-      setPersons(response.data)
+    personService
+    .getAll()
+    .then(initialPersons => {
+      setPersons(initialPersons)
     })
   },[])
 
@@ -27,30 +29,56 @@ const App = () => {
       number:newNumber
     }
     if(persons.find( ({ name }) => name.trim().toLocaleLowerCase() === newName.trim().toLocaleLowerCase() )){
-      alert(`${newName} is already added to phonebook`)
+      handlePersonUpdate(person)
     }else{
-      setPersons(persons.concat(person)) 
+      //setPersons(persons.concat(person))
+      personService
+      .create(person)
+      .then(returnedPersons =>{
+        setPersons(persons.concat(returnedPersons))
+      })
     }
-    
   }
-
+  
   const handleNameChange = (event) => {
-    //console.log(event.target.value)
     setNewName(event.target.value)
   }
   const handleNumberChange = (event) => {
-    //console.log(event.target.value)
     setNewNumber(event.target.value)
   }
   const handleFilterChange = (event) => {
-    //console.log(event.target.value)
-    
     setNewFilter(event.target.value)
-    
+  }
+  const handlePersonDelete = (pname) => {
+    if(window.confirm("Delete "+pname+"?")){
+      console.log(pname+" to be deleted")
+    let person = persons.find(person => person.name === pname)
+    //console.log(id.id)
+    personService
+    .del(person.id);
+    personService
+    .getAll()
+    .then(persons => {
+      setPersons(persons)
+    })
+    }
+  }
+  const handlePersonUpdate = (p) => {
+    if(window.confirm(`${p.name} is already added to phonebook, replace the old number with a new one?`)){
+      //console.log("moi")
+      let person = persons.find(person => person.name === p.name)
+      personService
+      .update(person.id,p)
+      personService
+      .getAll()
+      .then(persons => {
+        setPersons(persons)
+      })
+    }
   }
 
   const personsToShow = showAll
-  ? persons
+  ? persons 
   : persons.filter(person=>person.name.trim().toLocaleLowerCase().includes(newFilter.trim().toLocaleLowerCase()))
 
   return (
@@ -69,7 +97,8 @@ const App = () => {
           
         />
       <h2>Numbers</h2>
-      <Persons personsToShow ={personsToShow}/>
+      <Persons personsToShow ={personsToShow} handlePersonDelete ={handlePersonDelete} />
+      
 
     </div>
   )
