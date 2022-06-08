@@ -12,6 +12,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
   const [showAll] = useState(false)
+  const [eventMessage, setEventMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -36,6 +37,10 @@ const App = () => {
       .create(person)
       .then(returnedPersons =>{
         setPersons(persons.concat(returnedPersons))
+        setEventMessage(`${person.name} added succesfully!`)
+        setTimeout(() => {
+          setEventMessage(null)
+        }, 5000)
       })
     }
   }
@@ -55,12 +60,22 @@ const App = () => {
     let person = persons.find(person => person.name === pname)
     //console.log(id.id)
     personService
-    .del(person.id);
+    .del(person.id)
+    .catch(error => console.log(`error: ${error}`), setEventMessage(`Error: ${person.name} was already removed from the server!`))
+    
+    setTimeout(() => {
+      setEventMessage(null)
+    }, 5000);
     personService
     .getAll()
     .then(persons => {
       setPersons(persons)
+      setEventMessage(`${person.name} deleted succesfully!`)
+        setTimeout(() => {
+          setEventMessage(null)
+        }, 5000)
     })
+    
     }
   }
   const handlePersonUpdate = (p) => {
@@ -73,6 +88,10 @@ const App = () => {
       .getAll()
       .then(persons => {
         setPersons(persons)
+        setEventMessage(`${person.name} updated succesfully!`)
+        setTimeout(() => {
+          setEventMessage(null)
+        }, 5000)
       })
     }
   }
@@ -84,6 +103,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification eventMessage={eventMessage}/>
         <Filter 
           filter={newFilter} 
           handleFilterChange={handleFilterChange}/>
@@ -98,12 +118,36 @@ const App = () => {
         />
       <h2>Numbers</h2>
       <Persons personsToShow ={personsToShow} handlePersonDelete ={handlePersonDelete} />
-      
-
     </div>
   )
   
 
+}
+const Notification = ({eventMessage}) => {
+  //oma komponentti?
+  const notificationStyle ={
+    color: "green",
+    fontStyle: "italic",
+    fontSize: 20,
+    background: "lightgrey",
+    borderStyle: "solid",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+  //console.log(eventMessage)
+
+  if(eventMessage === null){
+    return null
+  }else{
+    return(
+      <div style={notificationStyle}>
+      {eventMessage}
+      
+      </div>
+    )
+   
+  }
 }
 
 
